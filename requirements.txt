@@ -1,0 +1,11 @@
+langchain
+langgraph
+langchain-openai
+pydantic
+flask
+requests
+streamlit
+python-dotenv
+pandas
+pytest
+pyyaml

@@ -1,0 +1,97 @@
+{
+  "invoice_id": "INV-2024-0017",
+  "overall_decision": "ESCALATE_TO_HUMAN",
+  "compliance_score": 110,
+  "confidence": 1.1,
+  "requires_human_review": true,
+  "validation_results": {
+    "category_a_authenticity": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "A1": {
+          "status": true,
+          "message": "Invoice number format valid"
+        },
+        "A2": {
+          "status": true,
+          "message": "No duplicate found"
+        }
+      }
+    },
+    "category_b_gst": {
+      "score": 3,
+      "max_score": 3,
+      "checks": {
+        "B1": {
+          "status": true,
+          "message": "Vendor GSTIN valid and Active"
+        },
+        "B7": {
+          "status": true,
+          "message": "Tax type consistency valid"
+        },
+        "B11": {
+          "status": true,
+          "message": "Composition scheme compliance valid"
+        }
+      }
+    },
+    "category_c_arithmetic": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "C1": {
+          "status": true,
+          "message": "Line item arithmetic correct"
+        },
+        "C2": {
+          "status": true,
+          "message": "Subtotal matches sum of items"
+        }
+      }
+    },
+    "category_d_tds": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "D1": {
+          "status": true,
+          "message": "TDS applicability determined"
+        },
+        "D2": {
+          "status": true,
+          "message": "TDS Section accurately identified"
+        }
+      }
+    },
+    "category_e_policy": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "E1": {
+          "status": true,
+          "message": "Invoice within PO tolerance (+/- 5%)"
+        },
+        "E3": {
+          "status": true,
+          "message": "Vendor found in approved list"
+        }
+      }
+    }
+  },
+  "tds_summary": {},
+  "gst_summary": {},
+  "audit_trail": [
+    "ExtractorAgent: Starting extraction process.",
+    "ExtractorAgent: Detected JSON input. Parsing directly.",
+    "ExtractorAgent: Successfully extracted invoice INV-2024-0017",
+    "ValidatorAgent: Starting compliance checks.",
+    "ValidatorAgent: Completed all 10 compliance checks.",
+    "ResolverAgent: Analyzing validation results and making final decision.",
+    "ResolverAgent: High value invoice (> 10L). Escalating for approval.",
+    "ResolverAgent: Final decision is ESCALATE_TO_HUMAN with confidence 110.0%.",
+    "ReporterAgent: Generating final report.",
+    "ReporterAgent: Final report generated successfully."
+  ]
+}

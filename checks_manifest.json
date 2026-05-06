@@ -1,0 +1,17 @@
+{
+  "candidate_name": "Suraj Yadav",
+  "total_checks_implemented": 11,
+  "checks": {
+    "A1": { "implemented": true, "priority": "HIGH", "notes": "Basic format validation of invoice ID." },
+    "A2": { "implemented": true, "priority": "HIGH", "notes": "Cross-invoice duplicate detection using SQLite." },
+    "B1": { "implemented": true, "priority": "HIGH", "notes": "Regex-based GSTIN format validation." },
+    "B7": { "implemented": true, "priority": "HIGH", "notes": "Inter-state vs Intra-state tax consistency check." },
+    "B11": { "implemented": true, "priority": "HIGH", "notes": "Composition Scheme dealer tax charging validation." },
+    "C1": { "implemented": true, "priority": "HIGH", "notes": "Line item arithmetic (Qty x Rate = Amount)." },
+    "C2": { "implemented": true, "priority": "HIGH", "notes": "Subtotal validation (Sum of items = Subtotal)." },
+    "D1": { "implemented": true, "priority": "HIGH", "notes": "TDS applicability determination." },
+    "D2": { "implemented": true, "priority": "HIGH", "notes": "TDS Section (194C/J/I) mapping." },
+    "E1": { "implemented": true, "priority": "MEDIUM", "notes": "PO amount tolerance verification." },
+    "E3": { "implemented": true, "priority": "HIGH", "notes": "Approved vendor registry verification." }
+  }
+}
