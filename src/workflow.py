@@ -1,9 +1,9 @@
 from langgraph.graph import StateGraph, END
-from src.schema import InvoiceState
-from src.agents.extractor import ExtractorAgent
-from src.agents.validator import ValidatorAgent
-from src.agents.resolver import ResolverAgent
-from src.agents.reporter import ReporterAgent
+from schema import InvoiceState
+from agents.document_parser import ExtractorAgent
+from agents.compliance_checker import ValidatorAgent
+from agents.decision_resolver import ResolverAgent
+from agents.report_builder import ReporterAgent
 
 def create_workflow(config: dict = None):
     # Initialize agents with dynamic config

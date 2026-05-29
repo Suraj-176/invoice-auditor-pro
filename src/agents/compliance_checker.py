@@ -1,5 +1,5 @@
-from src.schema import InvoiceState, ValidationResults, CategoryResult, ValidationCheck
-from src.tools.compliance_tools import (
+from schema import InvoiceState, ValidationResults, CategoryResult, ValidationCheck
+from tools.compliance_tools import (
     validate_gstin_format, call_validate_gstin_api, check_duplicate_invoice,
     call_hsn_rate_api, get_vendor_annual_total, call_verify_206ab_api
 )

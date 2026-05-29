@@ -1,6 +1,8 @@
 langchain
 langgraph
 langchain-openai
+langchain-google-genai
+langchain-anthropic
 pydantic
 flask
 requests
@@ -9,3 +11,5 @@ python-dotenv
 pandas
 pytest
 pyyaml
+openpyxl
+Pillow

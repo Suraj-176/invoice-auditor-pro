@@ -188,4 +188,4 @@ def verify_206ab():
 
 if __name__ == '__main__':
     print("Starting Mock GST Server on port 8080...")
-    app.run(port=8080, debug=True)
+    app.run(port=8080, debug=False, use_reloader=False)

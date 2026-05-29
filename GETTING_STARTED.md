@@ -15,7 +15,7 @@ Ensure you have **Python 3.10+** installed.
    ```
 
 2. **Configure API Keys (Template):**
-   You don't need to manually edit files yet. We provided `config_template.env` for reference, but you can configure everything directly in the Web UI.
+   You don't need to manually edit files yet. We provided `.env.example` for reference. Copy it to `.env` and fill in your keys, or configure everything directly in the Web UI.
 
 ---
 

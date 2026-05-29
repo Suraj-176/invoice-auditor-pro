@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict, Any, Optional
-from src.schema import InvoiceState, InvoiceData, LineItem
+from schema import InvoiceState, InvoiceData, LineItem
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -53,17 +53,20 @@ class ExtractorAgent:
         file_path = state.raw_file_path
         file_ext = os.path.splitext(file_path)[1].lower()
 
-        # Simulated Extraction for known test invoices
-        if "data/invoices" in file_path or file_ext in ['.json']:
+        # Handle multi-invoice JSON files
+        if file_ext in ['.json']:
              state.audit_trail.append(f"ExtractorAgent: Detected JSON input. Parsing directly.")
              try:
                  with open(file_path, 'r') as f:
                      data = json.load(f)
                      # Handle if it's a list or single object
                      if isinstance(data, list):
-                         # For testing, we might be passed an ID to extract from the list
-                         # But usually we process one by one
-                         invoice_data_raw = data[0] 
+                         # BATCH MODE: Process first invoice, store metadata for batch reporting
+                         if len(data) > 0:
+                             invoice_data_raw = data[0]
+                             state.audit_trail.append(f"ExtractorAgent: Found {len(data)} invoices. Processing invoice 1 of {len(data)}.")
+                         else:
+                             raise ValueError("Empty invoice list")
                      else:
                          invoice_data_raw = data
                      

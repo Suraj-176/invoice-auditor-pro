@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment
-Copy `config_template.env` to `.env` and add your keys, or configure them directly in the UI.
+Copy `.env.example` to `.env` and add your keys, or configure them directly in the UI.
 
 ### 3. Start the Mock GST Server
 ```bash

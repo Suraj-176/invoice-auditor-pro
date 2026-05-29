@@ -1,4 +1,4 @@
-from src.schema import InvoiceState, OverallDecision
+from schema import InvoiceState, OverallDecision
 import json
 
 class ResolverAgent:

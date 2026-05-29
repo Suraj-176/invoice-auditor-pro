@@ -1,8 +1,8 @@
 import argparse
 import os
 import json
-from src.workflow import create_workflow
-from src.schema import InvoiceState
+from workflow import create_workflow
+from schema import InvoiceState
 
 def main():
     parser = argparse.ArgumentParser(description="Invoice Compliance Validator")
@@ -32,7 +32,7 @@ def main():
     # For now, let's reconstruct the state object to keep ReporterAgent clean.
     final_state = InvoiceState(**result)
 
-    from src.agents.reporter import ReporterAgent
+    from agents.report_builder import ReporterAgent
     reporter = ReporterAgent()
     output_json = reporter.generate_output_json(final_state)
 
