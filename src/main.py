@@ -1,18 +1,31 @@
 import argparse
 import os
 import json
+import sys
+
+# Add src directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from workflow import create_workflow
 from schema import InvoiceState
 
 def main():
     parser = argparse.ArgumentParser(description="Invoice Compliance Validator")
     parser.add_argument("--input", required=True, help="Path to input invoice file (JSON for now)")
-    parser.add_argument("--output", required=True, help="Path to save output JSON")
+    parser.add_argument("--output", default=None, help="Path to save output JSON (default: result/output/filename.json)")
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
         print(f"Error: Input file {args.input} not found.")
         return
+
+    # Determine output path
+    if args.output is None:
+        # Default output path: result/output/[input_filename_without_extension]_result.json
+        input_filename = os.path.basename(args.input)
+        input_name_only = os.path.splitext(input_filename)[0]
+        output_filename = f"{input_name_only}_result.json"
+        args.output = os.path.join("result", "output", output_filename)
 
     # Create the workflow
     workflow = create_workflow()
@@ -23,9 +36,6 @@ def main():
     # Run the workflow
     print(f"Processing invoice: {args.input}...")
     result = workflow.invoke(initial_state.model_dump())
-
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
     # If result is a dict, we might need to convert it back to InvoiceState for generate_output_json
     # or update generate_output_json to handle dicts.

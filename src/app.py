@@ -7,6 +7,10 @@ import sys
 import requests
 import pandas as pd
 import time
+
+# Add src directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from workflow import create_workflow
 from schema import InvoiceState, OverallDecision
 from agents.document_parser import ExtractorAgent
@@ -24,24 +28,22 @@ st.markdown("""
         background-color: #f8f9fa;
     }
     div.stButton > button {
-        width: 100%;
         border-radius: 8px;
-        height: 3em;
         transition: all 0.3s;
     }
-    /* Override for config pill button in header (right column) */
-    [data-testid="column"]:nth-last-child(1) div.stButton > button {
-        height: 2.2em !important;
-        padding: 6px 14px !important;
-        font-size: 13px !important;
-        border: 1px solid #d0d5dd !important;
-        background: #f0f2f6 !important;
+    .config-pill {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        border: none !important;
+        padding: 10px 16px !important;
         border-radius: 20px !important;
-        width: auto !important;
-        color: #333 !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+        transition: all 0.3s ease !important;
     }
-    [data-testid="column"]:nth-last-child(1) div.stButton > button:hover {
-        background: #e8eaed !important;
+    .config-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 24px;
@@ -51,7 +53,6 @@ st.markdown("""
         white-space: pre-wrap;
         font-weight: 600;
     }
-    /* Make table rows more compact */
     .stTable td {
         padding: 5px !important;
     }
@@ -82,9 +83,13 @@ if not _gst_server_running():
 if "llm_config" not in st.session_state:
     st.session_state.llm_config = {}
 
-@st.dialog("⚙️ System Configuration")
 def show_config_dialog():
-    st.caption("🔒 Security: Credentials reside in session memory.")
+    """Display configuration dialog for LLM settings"""
+    st.markdown("🔒 **Security:** Credentials reside in session memory only.", unsafe_allow_html=True)
+    
+    # Initialize llm_temp if not exists
+    if "llm_temp" not in st.session_state:
+        st.session_state.llm_temp = st.session_state.get("llm_config", {})
     
     conf = st.session_state.get("llm_config", {})
     provider_list = ["OpenAI", "Azure OpenAI", "Google Gemini", "Anthropic Claude"]
@@ -95,82 +100,89 @@ def show_config_dialog():
     provider_reverse_map = {"OpenAI": "openai", "Azure OpenAI": "azure", "Google Gemini": "gemini", "Anthropic Claude": "claude"}
     default_idx = provider_map.get(current_provider_key, 0)
 
-    with st.container(height=400, border=False):
-        provider = st.selectbox("AI Provider", provider_list, index=default_idx)
-        selected_key = provider_reverse_map[provider]
-        
-        # Only show saved data if it belongs to the selected provider
-        p_conf = conf if selected_key == current_provider_key else {}
-        
-        if provider == "OpenAI":
-            api_key = st.text_input("API Key", type="password", value=p_conf.get("api_key", ""))
-            model = st.text_input("Model ID", value=p_conf.get("model", "gpt-4o"))
-            st.session_state.llm_temp = {"provider": "openai", "api_key": api_key, "model": model}
-        elif provider == "Azure OpenAI":
-            api_key = st.text_input("Azure Key", type="password", value=p_conf.get("api_key", ""))
-            endpoint = st.text_input("Endpoint URL", value=p_conf.get("endpoint", ""))
-            c1, c2 = st.columns(2)
-            deployment = c1.text_input("Deployment", value=p_conf.get("deployment", ""))
-            version = c2.text_input("API Version", value=p_conf.get("api_version", "2024-02-15-preview"))
-            st.session_state.llm_temp = {"provider": "azure", "api_key": api_key, "endpoint": endpoint, "deployment": deployment, "api_version": version}
-        elif provider == "Google Gemini":
-            api_key = st.text_input("Gemini Key", type="password", value=p_conf.get("api_key", ""))
-            model = st.text_input("Model ID", value=p_conf.get("model", "gemini-1.5-flash"))
-            st.session_state.llm_temp = {"provider": "gemini", "api_key": api_key, "model": model}
-        elif provider == "Anthropic Claude":
-            api_key = st.text_input("Claude Key", type="password", value=p_conf.get("api_key", ""))
-            model = st.text_input("Model ID", value=p_conf.get("model", "claude-3-5-sonnet-20240620"))
-            st.session_state.llm_temp = {"provider": "claude", "api_key": api_key, "model": model}
+    st.markdown("#### Select AI Provider")
+    provider = st.selectbox("Provider", provider_list, index=default_idx, label_visibility="collapsed")
+    selected_key = provider_reverse_map[provider]
+    
+    # Only show saved data if it belongs to the selected provider
+    p_conf = conf if selected_key == current_provider_key else {}
+    
+    st.markdown("#### Provider Credentials")
+    if provider == "OpenAI":
+        api_key = st.text_input("API Key", type="password", value=p_conf.get("api_key", ""), placeholder="sk_test_...")
+        model = st.text_input("Model ID", value=p_conf.get("model", "gpt-4o"), placeholder="e.g., gpt-4o")
+        st.session_state.llm_temp = {"provider": "openai", "api_key": api_key, "model": model}
+    elif provider == "Azure OpenAI":
+        api_key = st.text_input("Azure Key", type="password", value=p_conf.get("api_key", ""), placeholder="Your Azure key")
+        endpoint = st.text_input("Endpoint URL", value=p_conf.get("endpoint", ""), placeholder="https://your-resource.openai.azure.com/")
+        c1, c2 = st.columns(2)
+        deployment = c1.text_input("Deployment", value=p_conf.get("deployment", ""), placeholder="e.g., gpt-4-turbo")
+        version = c2.text_input("API Version", value=p_conf.get("api_version", "2024-02-15-preview"))
+        st.session_state.llm_temp = {"provider": "azure", "api_key": api_key, "endpoint": endpoint, "deployment": deployment, "api_version": version}
+    elif provider == "Google Gemini":
+        api_key = st.text_input("Gemini Key", type="password", value=p_conf.get("api_key", ""), placeholder="Your Gemini API key")
+        model = st.text_input("Model ID", value=p_conf.get("model", "gemini-1.5-flash"), placeholder="e.g., gemini-1.5-flash")
+        st.session_state.llm_temp = {"provider": "gemini", "api_key": api_key, "model": model}
+    elif provider == "Anthropic Claude":
+        api_key = st.text_input("Claude Key", type="password", value=p_conf.get("api_key", ""), placeholder="sk_ant_...")
+        model = st.text_input("Model ID", value=p_conf.get("model", "claude-3-5-sonnet-20240620"), placeholder="e.g., claude-3-5-sonnet")
+        st.session_state.llm_temp = {"provider": "claude", "api_key": api_key, "model": model}
 
-        st.divider()
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("Test", width='stretch'):
-                try:
-                    config = st.session_state.llm_temp
-                    provider = config.get("provider", "")
-                    api_key = config.get("api_key", "").strip()
-                    
-                    if not provider:
-                        st.write("❌ Please select an AI provider")
-                    elif not api_key:
-                        st.write("❌ API Key is required")
-                    elif provider == "openai" and not config.get("model"):
-                        st.write("❌ Model ID is required")
-                    elif provider == "azure":
-                        if not config.get("endpoint"):
-                            st.write("❌ Azure Endpoint is required")
-                        elif not config.get("deployment"):
-                            st.write("❌ Deployment name is required")
-                        elif not config.get("api_version"):
-                            st.write("❌ API Version is required")
-                        else:
-                            st.write("✅ Configuration validated!")
-                            st.session_state.llm_config = config
-                    elif provider == "gemini" and not config.get("model"):
-                        st.write("❌ Gemini Model ID is required")
-                    elif provider == "claude" and not config.get("model"):
-                        st.write("❌ Claude Model ID is required")
+    st.divider()
+    
+    # Action buttons
+    st.markdown("#### Actions")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("✓ Test", use_container_width=True):
+            try:
+                config = st.session_state.llm_temp
+                provider = config.get("provider", "")
+                api_key = config.get("api_key", "").strip()
+                
+                if not provider:
+                    st.error("❌ Please select an AI provider")
+                elif not api_key:
+                    st.error("❌ API Key is required")
+                elif provider == "openai" and not config.get("model"):
+                    st.error("❌ Model ID is required")
+                elif provider == "azure":
+                    if not config.get("endpoint"):
+                        st.error("❌ Azure Endpoint is required")
+                    elif not config.get("deployment"):
+                        st.error("❌ Deployment name is required")
+                    elif not config.get("api_version"):
+                        st.error("❌ API Version is required")
                     else:
-                        st.write("✅ Configuration validated!")
+                        st.success("✅ Configuration validated!")
                         st.session_state.llm_config = config
-                except Exception as e: 
-                    st.write(f"❌ Validation error: {str(e)[:60]}")
-        with col2:
-            if st.button("Save", width='stretch'):
-                st.session_state.llm_config = st.session_state.llm_temp
-                st.write("✅ Saved for this session.")
-                time.sleep(0.5)
-                st.rerun()
-        with col3:
-            if st.button("Reset", width='stretch'):
-                st.session_state.llm_config = {}
-                st.write("🔄 Configuration reset.")
-                time.sleep(0.5)
-                st.rerun()
+                elif provider == "gemini" and not config.get("model"):
+                    st.error("❌ Gemini Model ID is required")
+                elif provider == "claude" and not config.get("model"):
+                    st.error("❌ Claude Model ID is required")
+                else:
+                    st.success("✅ Configuration validated!")
+                    st.session_state.llm_config = config
+            except Exception as e: 
+                st.error(f"❌ Validation error: {str(e)[:60]}")
+    
+    with col2:
+        if st.button("💾 Save", use_container_width=True):
+            st.session_state.llm_config = st.session_state.llm_temp
+            st.success("✅ Saved for this session.")
+            time.sleep(1)
+            st.rerun()
+    
+    with col3:
+        if st.button("🔄 Reset", use_container_width=True):
+            st.session_state.llm_config = {}
+            st.info("Configuration reset.")
+            time.sleep(0.5)
+            st.rerun()
 
-        st.divider()
-        st.caption("🔒 Credentials are stored in session memory only — never written to disk. Cleared when the browser tab is closed.")
+    st.divider()
+    st.caption("🔒 Credentials stored in session memory only — cleared when browser tab is closed.")
 
 # --- Header with Title and Status Pill in Same Row ---
 _cfg = st.session_state.get("llm_config", {})
@@ -186,17 +198,110 @@ else:
     _status_text = "Not configured"
 
 # Layout: Title on left, Status pill on right in same row
-title_col, spacer_col, config_col = st.columns([2, 1, 1], gap="small", vertical_alignment="center")
+title_col, spacer_col, config_col = st.columns([2, 1, 1], gap="small")
 
 with title_col:
     st.title("🛡️ Invoice Auditor Pro")
     st.caption("Agentic Multi-Stage Compliance Validation Engine")
 
 with config_col:
-    if st.button(f"● {_status_text}", key="sys_config_pill", help="Click to configure", width='content'):
-        show_config_dialog()
+    st.write("")  # Spacer for vertical alignment
+    # Use markdown for better styled button
+    if st.button(f"⚙️ {_status_text}", key="sys_config_pill", help="Click to configure system settings"):
+        st.session_state.show_config = not st.session_state.get("show_config", False)
+        st.rerun()
 
 st.divider()
+
+# --- Configuration Modal (as pop-up window) ---
+if st.session_state.get("show_config", False):
+    # Create modal overlay with better styling
+    st.markdown("""
+    <style>
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .modal-content {
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        width: 95%;
+        max-width: 520px;
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 32px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 16px;
+    }
+    .modal-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+    .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+        padding: 0;
+        transition: color 0.2s;
+    }
+    .modal-close-btn:hover {
+        color: #ef4444;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Modal overlay container
+    col_left, col_modal, col_right = st.columns([0.5, 2, 0.5])
+    
+    with col_modal:
+        st.markdown("""
+        <div style="background: white; border-radius: 16px; padding: 32px; 
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 0, 0, 0.08);">
+        """, unsafe_allow_html=True)
+        
+        # Modal header with close button
+        header_col1, header_col2 = st.columns([6, 1])
+        with header_col1:
+            st.markdown("### ⚙️ System Configuration")
+        with header_col2:
+            if st.button("✕", key="close_config_top", help="Close"):
+                st.session_state.show_config = False
+                st.rerun()
+        
+        st.divider()
+        
+        # Configuration content
+        show_config_dialog()
+        
+        st.divider()
+        
+        # Footer buttons
+        footer_col1, footer_col2, footer_col3 = st.columns(3)
+        with footer_col1:
+            if st.button("← Back", key="close_config_bottom"):
+                st.session_state.show_config = False
+                st.rerun()
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Upload Area ---
 uploaded_file = st.file_uploader("Drop invoice (JSON, CSV, XLSX, PNG, JPG)", type=["json", "csv", "xlsx", "png", "jpg"], label_visibility="collapsed")
@@ -272,9 +377,9 @@ if uploaded_file:
     stop_clicked = False
     
     with exec_col1:
-        execute_clicked = st.button("▶️ Execute", width='stretch', key="execute_btn")
+        execute_clicked = st.button("▶️ Execute", key="execute_btn")
     with exec_col2:
-        stop_clicked = st.button("⏹️ Stop", width='stretch', key="stop_btn")
+        stop_clicked = st.button("⏹️ Stop", key="stop_btn")
     
     if stop_clicked:
         st.info("⚠️ Processing stopped by user.")
@@ -368,7 +473,7 @@ if uploaded_file:
         
         from agents.report_builder import ReporterAgent
         export_data = ReporterAgent().generate_output_json(state)
-        m4.download_button("📥 Export Report", data=json.dumps(export_data, indent=2), file_name=f"audit_{state.extracted_data.invoice_id if state.extracted_data else 'unknown'}.json", width='stretch')
+        m4.download_button("📥 Export Report", data=json.dumps(export_data, indent=2), file_name=f"audit_{state.extracted_data.invoice_id if state.extracted_data else 'unknown'}.json")
 
         # Detail Tabs
         tab_summary, tab_checks, tab_logic, tab_raw = st.tabs(["📋 Summary", "⚖️ Compliance Matrix", "🧠 Agent Reasoning", "📄 Raw Source"])
@@ -377,19 +482,19 @@ if uploaded_file:
             if state.extracted_data:
                 c1, c2, c3 = st.columns(3)
                 with c1:
-                    with st.container(border=True):
+                    with st.container():
                         st.markdown("#### 🏢 Vendor")
                         st.write(f"**{state.extracted_data.vendor_name}**")
                         st.caption(f"GSTIN: `{state.extracted_data.vendor_gstin}` | PAN: `{state.extracted_data.pan}`")
                 
                 with c2:
-                    with st.container(border=True):
+                    with st.container():
                         st.markdown("#### 📅 Invoice")
                         st.write(f"ID: `{state.extracted_data.invoice_id}`")
                         st.caption(f"Date: {state.extracted_data.invoice_date}")
                 
                 with c3:
-                    with st.container(border=True):
+                    with st.container():
                         st.markdown("#### 💰 Financials")
                         st.write(f"Subtotal: ₹{state.extracted_data.subtotal:,.2f}")
                         st.caption(f"Total: ₹{state.extracted_data.total_amount:,.2f}")
@@ -408,18 +513,18 @@ if uploaded_file:
                             "Status": "✅ Pass" if v.status else "❌ Fail",
                             "Details": v.message
                         })
-                with st.container(height=400, border=True):
+                with st.container():
                     st.table(pd.DataFrame(all_checks))
 
         with tab_logic:
-            with st.container(height=400, border=True):
+            with st.container():
                 for step in state.audit_trail:
                     icon = "✅" if "success" in step.lower() or "completed" in step.lower() else "ℹ️"
                     if "Error" in step or "Critical" in step: icon = "🚨"
                     st.write(f"{icon} {step}")
 
         with tab_raw:
-            with st.container(height=400, border=True):
+            with st.container():
                 st.json(json.loads(uploaded_file.getvalue()))
     
     else:
@@ -456,14 +561,13 @@ if uploaded_file:
                 "Compliance": f"{exp['compliance_score']}%",
                 "Confidence": f"{exp['confidence']*100:.0f}%",
             })
-        st.dataframe(pd.DataFrame(summary_data), width='stretch')
+        st.dataframe(pd.DataFrame(summary_data))
 
         # Bulk export
         st.download_button(
             "📥 Export All Reports (JSON)",
             data=json.dumps(all_exports, indent=2),
-            file_name=f"batch_audit_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
-            width='stretch'
+            file_name=f"batch_audit_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json"
         )
 
         st.divider()
@@ -492,8 +596,7 @@ if uploaded_file:
                         "📥 Export Report",
                         data=json.dumps(exp, indent=2),
                         file_name=f"audit_{inv_id}.json",
-                        key=f"dl_{idx}",
-                        width='stretch'
+                        key=f"dl_{idx}"
                     )
 
                 m1, m2, m3, m4 = st.columns(4)
@@ -506,12 +609,12 @@ if uploaded_file:
                 if d:
                     vi1, vi2 = st.columns(2)
                     with vi1:
-                        with st.container(border=True):
+                        with st.container():
                             st.caption("🏢 Vendor")
                             st.write(f"**{d.vendor_name}**")
                             st.caption(f"GSTIN: `{d.vendor_gstin}` | PAN: `{d.pan}`")
                     with vi2:
-                        with st.container(border=True):
+                        with st.container():
                             st.caption("📅 Invoice")
                             st.write(f"ID: `{d.invoice_id}`")
                             st.caption(f"Subtotal: ₹{d.subtotal:,.2f}  |  Tax: ₹{d.total_tax:,.2f}")
@@ -565,7 +668,7 @@ if uploaded_file:
                                     "Action": "", "Reasoning": f"{a_icon} {entry}",
                                     "Confidence": "-"
                                 })
-                        st.dataframe(pd.DataFrame(trail_rows), width='stretch')
+                        st.dataframe(pd.DataFrame(trail_rows))
                     else:
                         st.info("No audit trail available.")
 
@@ -585,3 +688,4 @@ else:
     st.info("👋 Welcome! Please upload an invoice JSON file to begin the automated audit.")
     with st.expander("📂 Where are the sample files?"):
         st.markdown("Sample invoices are located in `data/invoices/`. Open one to see the JSON format, or upload it directly here.")
+

@@ -1,0 +1,220 @@
+{
+  "invoice_id": "INV-2024-0007",
+  "overall_decision": "REJECTED",
+  "compliance_score": 54,
+  "confidence": 0.35699999999999993,
+  "requires_human_review": false,
+  "validation_results": {
+    "category_a_authenticity": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "A1": {
+          "status": "PASS",
+          "message": "Invoice number format valid"
+        },
+        "A2": {
+          "status": "PASS",
+          "message": "\u2705 Invoice is unique (No duplicates found)"
+        }
+      }
+    },
+    "category_b_gst": {
+      "score": 2,
+      "max_score": 3,
+      "checks": {
+        "B1": {
+          "status": "FAIL",
+          "message": "\u274c GSTIN Error: Invalid or Inactive"
+        },
+        "B7": {
+          "status": "PASS",
+          "message": "\u2705 Tax types (CGST/SGST/IGST) are consistent"
+        },
+        "B11": {
+          "status": "PASS",
+          "message": "\u2705 Composition scheme compliance verified"
+        }
+      }
+    },
+    "category_c_arithmetic": {
+      "score": 1,
+      "max_score": 2,
+      "checks": {
+        "C1": {
+          "status": "FAIL",
+          "message": "\u274c Arithmetic mismatch: Qty x Rate != Amount"
+        },
+        "C2": {
+          "status": "PASS",
+          "message": "\u2705 Subtotal matches sum of items"
+        }
+      }
+    },
+    "category_d_tds": {
+      "score": 0,
+      "max_score": 2,
+      "checks": {
+        "D1": {
+          "status": "FAIL",
+          "message": "\u274c TDS determination skipped: No PAN available"
+        },
+        "D2": {
+          "status": "FAIL",
+          "message": "\u274c Section determination failed: No PAN available"
+        }
+      }
+    },
+    "category_e_policy": {
+      "score": 1,
+      "max_score": 2,
+      "checks": {
+        "E1": {
+          "status": "PASS",
+          "message": "Invoice within PO tolerance (+/- 5%)"
+        },
+        "E3": {
+          "status": "FAIL",
+          "message": "Vendor not in approved registry"
+        }
+      }
+    }
+  },
+  "tds_summary": null,
+  "gst_summary": {
+    "cgst_amount": 0,
+    "cgst_rate": 0,
+    "sgst_amount": 0,
+    "sgst_rate": 0,
+    "igst_amount": 0,
+    "igst_rate": 0
+  },
+  "audit_trail": [
+    {
+      "timestamp": "2026-06-13T11:52:16.145737",
+      "agent": "Extractor",
+      "action": "Start",
+      "reasoning": "Starting extraction process.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:16.345737",
+      "agent": "Extractor",
+      "action": "Processing",
+      "reasoning": "Detected JSON input. Parsing directly.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:16.545737",
+      "agent": "Extractor",
+      "action": "Processing",
+      "reasoning": "Found 1 invoices in batch.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:16.745737",
+      "agent": "Extractor",
+      "action": "Complete",
+      "reasoning": "Successfully extracted invoice INV-2024-0007 (1 of 1)",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:16.945737",
+      "agent": "Validator",
+      "action": "Start",
+      "reasoning": "Starting compliance checks.",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:17.145737",
+      "agent": "Validator",
+      "action": "Duplicate Check",
+      "reasoning": "Checking for duplicates (ID: INV-2024-0007, Vendor: None)",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:17.345737",
+      "agent": "Validator",
+      "action": "Complete",
+      "reasoning": "Completed all 10 compliance checks.",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:17.545737",
+      "agent": "Resolver",
+      "action": "Final Decision",
+      "reasoning": "Analyzing validation results and making final decision.",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:17.745737",
+      "agent": "Resolver",
+      "action": "Processing",
+      "reasoning": "Confidence penalty for arithmetic mismatch: -25%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:17.945737",
+      "agent": "Resolver",
+      "action": "Processing",
+      "reasoning": "Confidence penalty for GSTIN issues: -30%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:18.145737",
+      "agent": "Resolver",
+      "action": "Complete",
+      "reasoning": "Confidence penalty for incomplete vendor data: -20%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:18.345737",
+      "agent": "Resolver",
+      "action": "Processing",
+      "reasoning": "Confidence penalty for suspicious data patterns: -15%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:18.545737",
+      "agent": "Resolver",
+      "action": "Processing",
+      "reasoning": "Compliance Score = 54.5%, Confidence = 35.7%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:18.745737",
+      "agent": "Resolver",
+      "action": "Critical Failure",
+      "reasoning": "Critical failures detected: ['Invalid or inactive GSTIN']",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:18.945737",
+      "agent": "Resolver",
+      "action": "Final Decision",
+      "reasoning": "Final Decision = REJECTED",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:19.145737",
+      "agent": "Reporter",
+      "action": "Final Decision",
+      "reasoning": "Final decision is REJECTED",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:19.345737",
+      "agent": "Reporter",
+      "action": "Processing",
+      "reasoning": "Logging invoice INV-2024-0007 to processed registry...",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:19.545737",
+      "agent": "Reporter",
+      "action": "Processing",
+      "reasoning": "Invoice not approved, skipping financial total update.",
+      "confidence": 1.0
+    }
+  ]
+}

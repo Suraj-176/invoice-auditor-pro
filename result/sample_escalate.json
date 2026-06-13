@@ -1,0 +1,43 @@
+{
+  "invoice_id": "INV-ESCALATE-001",
+  "invoice_number": "ESC/2024/5001",
+  "invoice_date": "2024-09-15",
+  "vendor": {
+    "name": "Premium Enterprise Solutions Pvt Ltd",
+    "gstin": "27AABCT5678F1ZP",
+    "pan": "AABCT5678F",
+    "address": "Corporate Tower, Bandra, Mumbai - 400050"
+  },
+  "buyer": {
+    "name": "FinanceGuard Solutions Private Limited",
+    "gstin": "27AABCF9999K1ZX",
+    "address": "Tower A, Mindspace, Goregaon East, Mumbai - 400063"
+  },
+  "line_items": [
+    {
+      "description": "Enterprise Software License - Annual Subscription",
+      "hsn_sac": "998315",
+      "quantity": 1,
+      "unit": "License",
+      "rate": 2500000,
+      "amount": 2500000
+    }
+  ],
+  "subtotal": 2500000,
+  "cgst_rate": 9,
+  "cgst_amount": 225000,
+  "sgst_rate": 9,
+  "sgst_amount": 225000,
+  "igst_rate": 0,
+  "igst_amount": 0,
+  "total_tax": 450000,
+  "total_amount": 2950000,
+  "irn": "x1y2z3a4b5c6d7e8f9g0h1i2j3k4l5m6",
+  "irn_date": "2024-09-15",
+  "qr_code_present": true,
+  "payment_terms": "Net 60",
+  "po_reference": "PO-2024-STRATEGIC-9999",
+  "notes": "High value strategic purchase - requires management approval",
+  "_test_category": "HIGH_VALUE",
+  "_expected_result": "ESCALATE_TO_HUMAN"
+}

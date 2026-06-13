@@ -1,0 +1,192 @@
+{
+  "invoice_id": "INV-2024-0012",
+  "overall_decision": "REJECTED",
+  "compliance_score": 90,
+  "confidence": 1.0,
+  "requires_human_review": false,
+  "validation_results": {
+    "category_a_authenticity": {
+      "score": 1,
+      "max_score": 2,
+      "checks": {
+        "A1": {
+          "status": "PASS",
+          "message": "Invoice number format valid"
+        },
+        "A2": {
+          "status": "FAIL",
+          "message": "\u274c Duplicate detected: This invoice was already processed"
+        }
+      }
+    },
+    "category_b_gst": {
+      "score": 3,
+      "max_score": 3,
+      "checks": {
+        "B1": {
+          "status": "PASS",
+          "message": "\u2705 GSTIN is valid and active"
+        },
+        "B7": {
+          "status": "PASS",
+          "message": "\u2705 Tax types (CGST/SGST/IGST) are consistent"
+        },
+        "B11": {
+          "status": "PASS",
+          "message": "\u2705 Composition scheme compliance verified"
+        }
+      }
+    },
+    "category_c_arithmetic": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "C1": {
+          "status": "PASS",
+          "message": "\u2705 Line item calculations are correct"
+        },
+        "C2": {
+          "status": "PASS",
+          "message": "\u2705 Subtotal matches sum of items"
+        }
+      }
+    },
+    "category_d_tds": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "D1": {
+          "status": "PASS",
+          "message": "\u2705 TDS Applicable: Annual total (\u20b91,840,800) exceeds threshold (\u20b930,000)"
+        },
+        "D2": {
+          "status": "PASS",
+          "message": "\u2705 TDS Section 194C identified"
+        }
+      }
+    },
+    "category_e_policy": {
+      "score": 2,
+      "max_score": 2,
+      "checks": {
+        "E1": {
+          "status": "PASS",
+          "message": "Invoice within PO tolerance (+/- 5%)"
+        },
+        "E3": {
+          "status": "PASS",
+          "message": "Vendor found in approved list"
+        }
+      }
+    }
+  },
+  "tds_summary": null,
+  "gst_summary": {
+    "cgst_amount": 0,
+    "cgst_rate": 0,
+    "sgst_amount": 0,
+    "sgst_rate": 0,
+    "igst_amount": 0,
+    "igst_rate": 0
+  },
+  "audit_trail": [
+    {
+      "timestamp": "2026-06-13T11:52:26.855963",
+      "agent": "Extractor",
+      "action": "Start",
+      "reasoning": "Starting extraction process.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:27.055963",
+      "agent": "Extractor",
+      "action": "Processing",
+      "reasoning": "Detected JSON input. Parsing directly.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:27.255963",
+      "agent": "Extractor",
+      "action": "Processing",
+      "reasoning": "Found 1 invoices in batch.",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:27.455963",
+      "agent": "Extractor",
+      "action": "Complete",
+      "reasoning": "Successfully extracted invoice INV-2024-0012 (1 of 1)",
+      "confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-13T11:52:27.655963",
+      "agent": "Validator",
+      "action": "Start",
+      "reasoning": "Starting compliance checks.",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:27.855963",
+      "agent": "Validator",
+      "action": "Duplicate Check",
+      "reasoning": "Checking for duplicates (ID: INV-2024-0012, Vendor: 29AABCT1234F2ZN)",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:28.055963",
+      "agent": "Validator",
+      "action": "Complete",
+      "reasoning": "Completed all 10 compliance checks.",
+      "confidence": 0.9
+    },
+    {
+      "timestamp": "2026-06-13T11:52:28.255963",
+      "agent": "Resolver",
+      "action": "Final Decision",
+      "reasoning": "Analyzing validation results and making final decision.",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:28.455963",
+      "agent": "Resolver",
+      "action": "Processing",
+      "reasoning": "Compliance Score = 90.9%, Confidence = 100.0%",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:28.655963",
+      "agent": "Resolver",
+      "action": "Critical Failure",
+      "reasoning": "Critical failures detected: ['Duplicate invoice detected']",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:28.855963",
+      "agent": "Resolver",
+      "action": "Final Decision",
+      "reasoning": "Final Decision = REJECTED",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:29.055963",
+      "agent": "Reporter",
+      "action": "Final Decision",
+      "reasoning": "Final decision is REJECTED",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:29.255963",
+      "agent": "Reporter",
+      "action": "Processing",
+      "reasoning": "Logging invoice INV-2024-0012 to processed registry...",
+      "confidence": 1.0
+    },
+    {
+      "timestamp": "2026-06-13T11:52:29.455963",
+      "agent": "Reporter",
+      "action": "Processing",
+      "reasoning": "Invoice not approved, skipping financial total update.",
+      "confidence": 1.0
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "invoice_id": "INV-REJECTED-001",
+  "invoice_number": "REJ/2024/8001",
+  "invoice_date": "2024-09-15",
+  "vendor": {
+    "name": "Suspicious Vendor Inc",
+    "gstin": "27AABCE9999F1ZP",
+    "pan": "AABCE9999F",
+    "address": "Unknown Building, Unknown Street, Mumbai - 400000"
+  },
+  "buyer": {
+    "name": "FinanceGuard Solutions Private Limited",
+    "gstin": "27AABCF9999K1ZX",
+    "address": "Tower A, Mindspace, Goregaon East, Mumbai - 400063"
+  },
+  "line_items": [
+    {
+      "description": "Mismatched Services",
+      "hsn_sac": "998300",
+      "quantity": 100,
+      "unit": "Unit",
+      "rate": 1000,
+      "amount": 95000
+    }
+  ],
+  "subtotal": 90000,
+  "cgst_rate": 9,
+  "cgst_amount": 9000,
+  "sgst_rate": 9,
+  "sgst_amount": 9000,
+  "igst_rate": 0,
+  "igst_amount": 0,
+  "total_tax": 18000,
+  "total_amount": 108000,
+  "irn": null,
+  "irn_date": null,
+  "qr_code_present": false,
+  "payment_terms": "Net 15",
+  "po_reference": "PO-INVALID-0000",
+  "notes": "Arithmetic error: 100 × 1000 = 100000 but line amount is 95000, subtotal is 90000",
+  "_test_category": "ARITHMETIC_ERROR",
+  "_expected_result": "REJECTED",
+  "_reason": "Line item quantity × rate does not match amount. Arithmetic check failed."
+}

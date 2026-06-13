@@ -13,3 +13,6 @@ pytest
 pyyaml
 openpyxl
 Pillow
+langchain-core
+typing-extensions
+python-multipart

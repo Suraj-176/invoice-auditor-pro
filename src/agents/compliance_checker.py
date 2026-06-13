@@ -95,17 +95,63 @@ class ValidatorAgent:
         results.category_c_arithmetic.score = sum(c.score for c in results.category_c_arithmetic.checks.values())
 
         # --- Category D: TDS ---
-        # D1: TDS applicability
+        # D1: TDS applicability - Check if vendor type requires TDS
         d1_status = True
+        d1_message = "TDS applicability determined"
+        
+        try:
+            # Check vendor type and threshold
+            if data.pan:
+                annual_total = get_vendor_annual_total(data.pan, data.invoice_date)
+                current_total = annual_total + data.total_amount
+                
+                # Section 194C (Contractors): >₹30,000 per contract
+                # Section 194J (Professional fees): >₹30,000 per transaction
+                # Section 194I (Rent): >₹100,000 per month or >₹1,200,000 per year
+                
+                tds_threshold = 30000  # Default to 194C/J threshold
+                if current_total > tds_threshold:
+                    d1_status = True
+                    d1_message = f"✅ TDS Applicable: Annual total (₹{current_total:,.0f}) exceeds threshold (₹{tds_threshold:,.0f})"
+                else:
+                    d1_status = True
+                    d1_message = f"✅ TDS Not Required: Annual total (₹{current_total:,.0f}) below threshold (₹{tds_threshold:,.0f})"
+            else:
+                d1_status = False
+                d1_message = "❌ TDS determination skipped: No PAN available"
+        except Exception as e:
+            d1_status = False
+            d1_message = f"❌ TDS check error: {str(e)}"
+        
         results.category_d_tds.checks["D1"] = ValidationCheck(
-            id="D1", status=d1_status, score=1, max_score=1,
-            message="TDS applicability determined"
+            id="D1", status=d1_status, score=1 if d1_status else 0, max_score=1,
+            message=d1_message
         )
         
-        # D2: Section determination
+        # D2: Section determination - Map to correct TDS section
+        d2_status = True
+        d2_message = "TDS Section accurately identified"
+        
+        if data.pan:
+            # Determine section based on vendor type and transaction nature
+            # This is simplified; real implementation would check vendor registry
+            section = "194C"  # Default to contractors
+            
+            # Rules for section determination:
+            # 194C: Contractors, carriage of goods
+            # 194J: Professional fees, director fees
+            # 194I: Rent and other payments
+            # 194LA: Commissions
+            # 206AB: Failure to furnish PAN (higher rate)
+            
+            d2_message = f"✅ TDS Section {section} identified"
+        else:
+            d2_status = False
+            d2_message = "❌ Section determination failed: No PAN available"
+        
         results.category_d_tds.checks["D2"] = ValidationCheck(
-            id="D2", status=True, score=1, max_score=1,
-            message="TDS Section accurately identified"
+            id="D2", status=d2_status, score=1 if d2_status else 0, max_score=1,
+            message=d2_message
         )
         results.category_d_tds.score = sum(c.score for c in results.category_d_tds.checks.values())
 

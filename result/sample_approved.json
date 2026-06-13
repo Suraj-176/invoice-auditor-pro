@@ -1,0 +1,43 @@
+{
+  "invoice_id": "INV-APPROVED-001",
+  "invoice_number": "AP/2024/001",
+  "invoice_date": "2024-09-15",
+  "vendor": {
+    "name": "Standard Vendor Services",
+    "gstin": "27AABCS1234F1ZP",
+    "pan": "AABCS1234F",
+    "address": "Unit 100, Business Park, Mumbai - 400069"
+  },
+  "buyer": {
+    "name": "FinanceGuard Solutions Private Limited",
+    "gstin": "27AABCF9999K1ZX",
+    "address": "Tower A, Mindspace, Goregaon East, Mumbai - 400063"
+  },
+  "line_items": [
+    {
+      "description": "Office Supplies and Stationery",
+      "hsn_sac": "481840",
+      "quantity": 100,
+      "unit": "Box",
+      "rate": 500,
+      "amount": 50000
+    }
+  ],
+  "subtotal": 50000,
+  "cgst_rate": 9,
+  "cgst_amount": 4500,
+  "sgst_rate": 9,
+  "sgst_amount": 4500,
+  "igst_rate": 0,
+  "igst_amount": 0,
+  "total_tax": 9000,
+  "total_amount": 59000,
+  "irn": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+  "irn_date": "2024-09-15",
+  "qr_code_present": true,
+  "payment_terms": "Net 30",
+  "po_reference": "PO-2024-GEN-0001",
+  "notes": "Standard purchase as per agreement",
+  "_test_category": "STANDARD_VALID",
+  "_expected_result": "APPROVED"
+}

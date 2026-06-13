@@ -63,3 +63,6 @@ class InvoiceState(BaseModel):
     requires_human_review: bool = False
     audit_trail: List[str] = Field(default_factory=list)
     errors: List[str] = Field(default_factory=list)
+    batch_size: int = 1  # Total invoices in batch
+    batch_index: int = 0  # Current invoice index (1-based)
+    pending_invoices: List[Dict[str, Any]] = Field(default_factory=list)  # Remaining invoices to process
